@@ -39,6 +39,7 @@ const typeDefs = gql`
 
   type Mutation {
     addWord(title: String!, search: String, meaning: String!): Word
+    editWord(title: String!, meaning: String!): Word
   }
 `;
 
@@ -59,6 +60,16 @@ const resolvers = {
       const word = { ...args, id: uuid() };
       words = words.concat(word);
       return word;
+    },
+    editWord: (root, args) => {
+      const word = words.find((p) => p.title === args.title);
+      if (!word) {
+        return null;
+      }
+
+      const updatedWord = { ...word, meaning: args.meaning };
+      words = words.map((p) => (p.title === args.title ? updatedWord : p));
+      return updatedWord;
     },
   },
 };
